@@ -1,9 +1,11 @@
-#ToD
+#TODO: Figure out what other models could work in this data
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score, StratifiedKFold
 import numpy as np
+from sklearn.model_selection import GridSearchCV
+from sklearn.ensemble import RandomForestRegressor
 
 
 class Lyme:
@@ -66,24 +68,15 @@ class Lyme:
         The random forest is a good intro model especially if researchers are interested in Lyme Disease.
         :return:
         """
-        param_grid = {'n_estimator': pd.Series(range(1, 11)).apply(lambda x: x*10).to_list,
+        param_grid = {'n_estimators': pd.Series(range(1, 11)).apply(lambda x: x*10).to_list(),
                       'criterion': ['gini', 'entropy'],
-                      'max_depth': [0, 1, 2, 5, 10, 20],
-                      'min_sample_leaf': pd.Series(range(1, 6)).to_list
+                      'max_depth': [1, 2, 5, 10, 20],
+                      'min_samples_leaf': list(range(1,6))
                       }
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        rf = GridSearchCV(
+            estimator=RandomForestRegressor(),
+            param_grid=param_grid
+        )
+        c = cross_val_score(
+            estimator=rf, X=self.xtrain, y=self.ytrain
+        )
