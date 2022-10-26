@@ -2,10 +2,11 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
+import xgboost as xgb
 from sklearn.model_selection import cross_val_score, StratifiedKFold
 import numpy as np
 from sklearn.model_selection import GridSearchCV
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier
 
 
 class Lyme:
@@ -19,7 +20,10 @@ class Lyme:
         self.ytest = None
         self.splitData()
         self.logAcc = None
+        self.logistic()
         self.rfAcc = None
+        #self.randomForest()
+
 
     @property
     def formatData(self) -> pd.DataFrame:
@@ -28,7 +32,7 @@ class Lyme:
         and concat some useful columns to the dataframe
         :return: A tidy dataframe
         """
-        lyme_disease: str = '/Users/matthewvoss/Documents/BUS767/BUS767/Lyme.xlsx'
+        lyme_disease: str = 'Lyme.xlsx'
         df1 = pd.read_excel(lyme_disease, sheet_name='Predictors of Tick Establish')
         df2 = pd.read_excel(lyme_disease, sheet_name='First Report Tick & Incidence')
         local = df1.iloc[:, [0, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]]
@@ -41,15 +45,30 @@ class Lyme:
         local = local[['TickPres', 'County', 'State', 'GeoID', 'Time', 'Rate', 'PosCounty']]
         return local
 
+    @property
+    def getCDC(self):
+        """
+        The CDC Data won't be used in the model. Mostly for exploration of data later
+        :return:
+        """
+        filePath = 'new_cdc.xlsx'
+        cdc = pd.read_excel(filePath).rename(columns={'Ctyname': 'County', 'Stname': 'State'})
+        cdc['County'] = cdc['County'].apply(lambda x: x.split(' ')[0])
+        cdc = cdc.set_index(['County', 'State','STCODE','CTYCODE'])
+        cdc.columns = list(range(2000, 2020))
+        cdc = cdc.stack().reset_index()
+        cdc = cdc.rename(columns={'level_4': 'Year', 0: 'Lyme Disease Rate'})
+        return cdc
+
     def splitData(self):
         self.y = self.data.loc[:, 'TickPres']
         self.x = self.data.iloc[:, 3:7]
         self.xtrain, self.xtest, self.ytrain, self.ytest = train_test_split(self.x, self.y, train_size=0.8,
                                                                             shuffle=True, random_state=22,
                                                                             stratify=self.y)
-
-
-        #TODO: You need to use some sort of shuffler to choose multiple training and validation sets.
+        self.xtrain, self.xvalidation, self.ytrain, self.validation = train_test_split(self.xtrain, self.ytrain,
+                                                                            shuffle=True, random_state=22,
+                                                                            train_size=0.75, stratify=self.ytrain)
 
     def logistic(self):
         """
@@ -63,20 +82,37 @@ class Lyme:
         print('The base accuracy to beat is: %.2f%%' % np.mean(c*100))
         self.logAcc = np.mean(c*100)
 
-    def randomForest(self):
-        """
-        The random forest is a good intro model especially if researchers are interested in Lyme Disease.
-        :return:
-        """
-        param_grid = {'n_estimators': pd.Series(range(1, 11)).apply(lambda x: x*10).to_list(),
+
+    l = Lyme()
+    param_grid = {'n_estimators': pd.Series(range(1, 11)).apply(lambda x: x*10).to_list(),
                       'criterion': ['gini', 'entropy'],
                       'max_depth': [1, 2, 5, 10, 20],
                       'min_samples_leaf': list(range(1,6))
                       }
-        rf = GridSearchCV(
-            estimator=RandomForestRegressor(),
+    rf = GridSearchCV(
+            estimator=RandomForestClassifier(),
             param_grid=param_grid
-        )
-        c = cross_val_score(
-            estimator=rf, X=self.xtrain, y=self.ytrain
-        )
+    )
+    rf.fit(l.xtrain, l.ytrain)
+    print('Best Random Forest', rf.best_params_)
+    param_grid = {'n_estimators': list(range(75, 86)),
+                      'criterion': ['gini', 'entropy'],
+                      'max_depth': list(range(2, 9)),
+                      'min_samples_leaf': list(range(1, 3))}
+    rf = GridSearchCV(
+            estimator=RandomForestClassifier(),
+            param_grid=param_grid
+    )
+    rf.fit(l.xtrain, l.ytrain)
+    print('Best Random Fores, ', rf.best_params_)
+    rfAcc = '%.2f%%' % (rf.score(l.xvalidation, l.yvalidation)*100)
+    TickPresence = l.data['TickPres'].sum()
+    NoTickPresence = l.data.shape[0]-TickPresence
+    weight = NoTickPresence/TickPresence
+    param_grid = {'n_estimators': pd.Series(range(1,11)).apply(lambda x: x*10).to_list()}
+
+
+# if __name__=="__main__":
+#     l = Lyme()
+#     print(l.logAcc)
+#     print(l.rfAcc)
