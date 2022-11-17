@@ -20,7 +20,7 @@ class Lyme:
         self.ytest = None
         self.splitData()
         self.logAcc = None
-        self.logistic()
+        #self.logistic()
         self.rfAcc = None
         #self.randomForest()
 
@@ -66,7 +66,7 @@ class Lyme:
         self.xtrain, self.xtest, self.ytrain, self.ytest = train_test_split(self.x, self.y, train_size=0.8,
                                                                             shuffle=True, random_state=22,
                                                                             stratify=self.y)
-        self.xtrain, self.xvalidation, self.ytrain, self.validation = train_test_split(self.xtrain, self.ytrain,
+        self.xtrain, self.xvalidation, self.ytrain, self.yvalidation = train_test_split(self.xtrain, self.ytrain,
                                                                             shuffle=True, random_state=22,
                                                                             train_size=0.75, stratify=self.ytrain)
 
@@ -83,33 +83,33 @@ class Lyme:
         self.logAcc = np.mean(c*100)
 
 
-    l = Lyme()
-    param_grid = {'n_estimators': pd.Series(range(1, 11)).apply(lambda x: x*10).to_list(),
+l = Lyme()
+param_grid = {'n_estimators': pd.Series(range(1, 11)).apply(lambda x: x*10).to_list(),
                       'criterion': ['gini', 'entropy'],
                       'max_depth': [1, 2, 5, 10, 20],
                       'min_samples_leaf': list(range(1,6))
-                      }
-    rf = GridSearchCV(
+             }
+rf = GridSearchCV(
             estimator=RandomForestClassifier(),
             param_grid=param_grid
-    )
-    rf.fit(l.xtrain, l.ytrain)
-    print('Best Random Forest', rf.best_params_)
-    param_grid = {'n_estimators': list(range(75, 86)),
+)
+rf.fit(l.xtrain, l.ytrain)
+print('Best Random Forest', rf.best_params_)
+param_grid = {'n_estimators': list(range(75, 86)),
                       'criterion': ['gini', 'entropy'],
                       'max_depth': list(range(2, 9)),
                       'min_samples_leaf': list(range(1, 3))}
-    rf = GridSearchCV(
+rf = GridSearchCV(
             estimator=RandomForestClassifier(),
             param_grid=param_grid
-    )
-    rf.fit(l.xtrain, l.ytrain)
-    print('Best Random Fores, ', rf.best_params_)
-    rfAcc = '%.2f%%' % (rf.score(l.xvalidation, l.yvalidation)*100)
-    TickPresence = l.data['TickPres'].sum()
-    NoTickPresence = l.data.shape[0]-TickPresence
-    weight = NoTickPresence/TickPresence
-    param_grid = {'n_estimators': pd.Series(range(1,11)).apply(lambda x: x*10).to_list()}
+)
+rf.fit(l.xtrain, l.ytrain)
+print('Best Random Fores, ', rf.best_params_)
+rfAcc = '%.2f%%' % (rf.score(l.xvalidation, l.yvalidation)*100)
+TickPresence = l.data['TickPres'].sum()
+NoTickPresence = l.data.shape[0]-TickPresence
+weight = NoTickPresence/TickPresence
+param_grid = {'n_estimators': pd.Series(range(1, 11)).apply(lambda x: x*10).to_list()}
 
 
 # if __name__=="__main__":
