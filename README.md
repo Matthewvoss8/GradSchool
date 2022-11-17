@@ -1,4 +1,5 @@
 # GradSchool
+### by Cassidy Kohls and Matthew Voss
 Lyme Disease project
 
 The purpose of this project is to better model the data than the researchers who used Logistic Regression. To learn more about their prior work go here: 
