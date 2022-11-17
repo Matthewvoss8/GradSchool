@@ -1,4 +1,4 @@
-# Predicting the Spread of Lyme Disease in the Midwest
+# Ticks in the Midwest
 <p align="center">By Cassidy Kohls and Matthew Voss</p>
 
 The purpose of this project is to better model the data than the researchers who used Logistic Regression. To learn more about their prior work go here: 
