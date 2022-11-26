@@ -1,31 +1,46 @@
-from main import LymeDisease
+from main import LymeDisease, Grid_Search
 from sklearn.ensemble import AdaBoostClassifier
-from sklearn.model_selection import GridSearchCV
-
-def grid_search_loader(estimator, param_grid: dict, cv: int = 10):
-    gs = GridSearchCV(
-        estimator=estimator,
-        param_grid=param_grid,
-        cv=cv,
-        scoring='accuracy'
-    )
-    return gs
-
-def get_accuracy(grid_search_object, x_t, x_v, y_t, y_v):
-    grid_search_object.fit(x_t, y_t)
-    train_acc = (grid_search_object.best_score_)*100
-    valid_acc = (grid_search_object.score(x_v, y_v))*100
-    print(f'{grid_search_object.estimator} best parameters are {grid_search_object.best_params_}')
-    print(f'{grid_search_object.estimator} training accuracy is {train_acc}%')
-    print(f'{grid_search_object.estimator} validation accuracy is {valid_acc}%')
+from sklearn.ensemble import HistGradientBoostingClassifier
 
 
 l = LymeDisease()
 # Tune and fit models to find best training and validation accuracy
 boost = AdaBoostClassifier(learning_rate=0.01)
 param_grid = {'n_estimators': [10, 20, 30, 40, 50, 60, 70, 80, 90]}
-gs = grid_search_loader(boost, param_grid)
-get_accuracy(gs, l.x_train, l.x_valid, l.y_train, l.y_valid)
+print = Grid_Search(estimator = boost, cv=10, param_grid=param_grid, x_train=l.x_train, y_train=l.y_train,
+                    x_valid=l.x_valid, y_valid=l.y_valid)
 param_grid = {'n_estimators': [15, 16, 17, 18, 19, 20, 21, 22, 23, 23, 24, 25]}
-gs = grid_search_loader(boost, param_grid)
-get_accuracy(gs, l.x_train, l.x_valid, l.y_train, l.y_valid)
+print = Grid_Search(estimator = boost, cv=10, param_grid=param_grid, x_train=l.x_train, y_train=l.y_train,
+                    x_valid=l.x_valid, y_valid=l.y_valid)
+
+# Since the accuracy is so low, I am going to try another Boosted ensemble method
+# Can only use log loss since our predictor is binary.
+# Warning this will take a long time to compile!! Run at your own risk
+hist_boost = HistGradientBoostingClassifier(random_state=42)
+param_grid = {'loss': ['log_loss'], 'max_iter': [50, 100, 150, 200], 'max_leaf_nodes': [None, 10, 20, 31, 40],
+              'min_samples_leaf': [5, 10, 15, 20, 25, 30], 'max_bins': [200, 250, 300, 350, 400]}
+print = Grid_Search(estimator = hist_boost, cv=10, param_grid=param_grid, x_train=l.x_train, y_train=l.y_train,
+                    x_valid=l.x_valid, y_valid=l.y_valid)
+param_grid = {'max_iter': [20, 25, 30], 'max_leaf_nodes': [10], 'min_samples_leaf': [10], 'max_bins': [200]}
+print = Grid_Search(estimator = hist_boost, cv=2, param_grid=param_grid, x_train=l.x_train, y_train=l.y_train,
+                    x_valid=l.x_valid, y_valid=l.y_valid)
+param_grid = {'max_iter': [30, 35, 37], 'max_leaf_nodes': [10], 'min_samples_leaf': [10], 'max_bins': [200]}
+print = Grid_Search(estimator = hist_boost, cv=2, param_grid=param_grid, x_train=l.x_train, y_train=l.y_train,
+                    x_valid=l.x_valid, y_valid=l.y_valid)
+param_grid = {'max_iter': [30], 'max_leaf_nodes': [5, 10, 15], 'min_samples_leaf': [10], 'max_bins': [200]}
+print = Grid_Search(estimator = hist_boost, cv=2, param_grid=param_grid, x_train=l.x_train, y_train=l.y_train,
+                    x_valid=l.x_valid, y_valid=l.y_valid)
+param_grid = {'max_iter': [30], 'max_leaf_nodes': [4, 5, 6], 'min_samples_leaf': [10], 'max_bins': [200]}
+print = Grid_Search(estimator = hist_boost, cv=2, param_grid=param_grid, x_train=l.x_train, y_train=l.y_train,
+                    x_valid=l.x_valid, y_valid=l.y_valid)
+param_grid = {'max_iter': [30], 'max_leaf_nodes': [5], 'min_samples_leaf': [5, 10, 15], 'max_bins': [200]}
+print = Grid_Search(estimator = hist_boost, cv=2, param_grid=param_grid, x_train=l.x_train, y_train=l.y_train,
+                    x_valid=l.x_valid, y_valid=l.y_valid)
+param_grid = {'max_iter': [30], 'max_leaf_nodes': [5], 'min_samples_leaf': [10], 'max_bins': [190, 200, 210, 220]}
+print = Grid_Search(estimator = hist_boost, cv=2, param_grid=param_grid, x_train=l.x_train, y_train=l.y_train,
+                    x_valid=l.x_valid, y_valid=l.y_valid)
+param_grid = {'max_iter': [30], 'max_leaf_nodes': [5], 'min_samples_leaf': [10], 'max_bins': [205, 208, 210, 212, 215]}
+print = Grid_Search(estimator = hist_boost, cv=2, param_grid=param_grid, x_train=l.x_train, y_train=l.y_train,
+                    x_valid=l.x_valid, y_valid=l.y_valid)
+
+

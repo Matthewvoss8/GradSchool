@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import torch
+from sklearn.model_selection import GridSearchCV
 
 
 class LymeDisease:
@@ -97,4 +98,35 @@ class LymeDisease:
         self.y_train_tensor = self.y_train_tensor.reshape(-1)
         self.y_valid_tensor = self.y_valid_tensor.reshape(-1)
         self.y_test_tensor = self.y_test_tensor.reshape(-1)
+
+
+class Grid_Search:
+    def __init__(self, estimator, cv, param_grid, x_train, y_train, x_valid, y_valid):
+        self.estimator = estimator
+        self.cv = cv
+        self.param_grid = param_grid
+        self.gs = None
+        self.x_train = x_train
+        self.y_train = y_train
+        self.x_valid = x_valid
+        self.y_valid = y_valid
+        self.loader()
+        self.get_acc()
+
+    def loader(self):
+        self.gs = GridSearchCV(
+                    estimator=self.estimator,
+                    param_grid=self.param_grid,
+                    cv=self.cv,
+                    scoring='accuracy'
+        )
+
+    def get_acc(self):
+        self.gs.fit(self.x_train, self.y_train)
+        train_acc = (self.gs.best_score_) * 100
+        valid_acc = (self.gs.score(self.x_valid, self.y_valid)) * 100
+        print(f'{self.gs.estimator} best parameters are {self.gs.best_params_}')
+        print(f'{self.gs.estimator} training accuracy is {train_acc}%')
+        print(f'{self.gs.estimator} validation accuracy is {valid_acc}%')
+
 
