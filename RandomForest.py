@@ -1,5 +1,5 @@
 from sklearn.ensemble import RandomForestClassifier
-from main import LymeDisease
+from main import LymeDisease, Grid_Search
 from sklearn.model_selection import GridSearchCV
 import pandas as pd
 
@@ -30,3 +30,6 @@ rf.fit(l.x_train, l.y_train)
 print('Best Random Forest parameters %s' % rf.best_params_)
 print('Training accuracy for random forest is %.2f%%' % (rf.best_score_*100))
 print('Validation accuracy for random forest is %.2f%%' % (rf.best_estimator_.score(l.x_valid, l.y_valid) * 100))
+print = Grid_Search(estimator = random_forest, cv=10, param_grid=param_grid, x_train=l.x_train,
+                    y_train=l.y_train, x_valid=l.x_valid, y_valid=l.y_valid)
+# using the param_grid, still best validation accuracy at 78%
