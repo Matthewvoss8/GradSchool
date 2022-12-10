@@ -5,10 +5,10 @@ from main import LymeDisease
 import pandas as pd
 
 l = LymeDisease()
-def train(hidden_size: int, num_layers: int, lr: int = 0.01, epochs: int = 200):
+def train(hidden_size: int, num_layers: int, lr: int = 0.01, epochs: int = 2_000):
     x_train = l.x_train_tensor
     y_train = l.y_train_tensor
-    model = lstm_dense(x_train.shape[2], hidden_size=hidden_size, num_layers=num_layers, h_s2=125)
+    model = lstm_linear(input_size=x_train.shape[2], hidden_size=hidden_size, num_layers=num_layers)
     criterion = torch.nn.MSELoss()
     optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9)
     for epoch in range(epochs):
@@ -63,12 +63,10 @@ class lstm_linear(nn.Module):
         self.num_layers = num_layers
         self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
         self.fully_connected = nn.Linear(hidden_size, 1)
-        self.ReLU = nn.ReLU()
     def forward(self, x):
         h_0 = torch.zeros(self.num_layers, x.shape[0], self.hidden_size)
         c_0 = torch.zeros(self.num_layers, x.shape[0], self.hidden_size)
         out, _ = self.lstm(x, (h_0, c_0))
-        #out = self.ReLU(out)
         out = out[:, -1, :]
         out = self.fully_connected(out).flatten()
         return out
@@ -97,3 +95,6 @@ class lstm_dense(nn.Module):
         out = self.fc3(out).flatten()
         return out
 
+if __name__ == '__main__':
+    model = train(hidden_size=5, num_layers=5, lr=0.01, epochs=500)
+    predict(model)
