@@ -2,7 +2,6 @@ import pandas as pd
 from sklearn.cluster import KMeans
 from main import LymeDisease
 import matplotlib.pyplot as plt
-from matplotlib import cm
 from sklearn.metrics import silhouette_samples
 import numpy as np
 
@@ -40,25 +39,25 @@ def plot_silhouette(x, k):
                 random_state=767)
     y_hat = km.fit_predict(x)
     c_labels = np.unique(y_hat)
-    n_clusters = c_labels.shape[0]
     silhouette = silhouette_samples(x, y_hat)
     lower, upper = 0, 0
     yticks = []
+    color = ['black', 'yellow']
     for i, c in enumerate(c_labels):
         c_sil = silhouette[y_hat == c]
         c_sil.sort()
         upper += len(c_sil)
-        color = cm.jet(float(i), n_clusters)
+        c = color[i]
         plt.barh(range(lower, upper),
                  c_sil,
                  height=1.0,
                  edgecolor='none',
-                 color=color)
+                 color=c)
         yticks.append(np.mean([lower, upper]))
         lower += len(c_sil)
     sil_average = np.mean(c_sil)
     plt.axvline(sil_average,
-                color='black')
+                color='red')
     plt.yticks(yticks, np.unique(y_hat) + 1)
     plt.ylabel('Cluster')
     plt.xlabel('Silhouette Cluster')
