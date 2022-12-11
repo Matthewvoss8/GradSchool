@@ -41,24 +41,24 @@ def plot_silhouette(x, k):
     c_labels = np.unique(y_hat)
     silhouette = silhouette_samples(x, y_hat)
     lower, upper = 0, 0
-    yticks = []
+    xticks = []
     color = ['black', 'yellow']
     for i, c in enumerate(c_labels):
         c_sil = silhouette[y_hat == c]
         c_sil.sort()
         upper += len(c_sil)
         c = color[i]
-        plt.barh(range(lower, upper),
-                 c_sil,
-                 height=1.0,
-                 edgecolor='none',
-                 color=c)
-        yticks.append(np.mean([lower, upper]))
+        plt.bar(x=np.array(range(lower, upper)),
+                height=c_sil,
+                width=1.0,
+                edgecolor='none',
+                color=c)
+        xticks.append(np.mean([lower, upper]))
         lower += len(c_sil)
     sil_average = np.mean(c_sil)
-    plt.axvline(sil_average,
+    plt.axhline(sil_average,
                 color='red')
-    plt.yticks(yticks, np.unique(y_hat) + 1)
+    plt.xticks(xticks, np.unique(y_hat) + 1)
     plt.ylabel('Cluster')
     plt.xlabel('Silhouette Coefficient')
     plt.title('Silhouette Coefficient by cluster')
