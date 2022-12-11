@@ -14,7 +14,7 @@ y = data.loc[:, data.columns == l.target].to_numpy().reshape(-1)
 
 
 def find_number_clusters(x, number):
-    distortion = []
+    inertia = []
     for i in range(1, number):
         km = KMeans(
             n_clusters=i,
@@ -24,10 +24,11 @@ def find_number_clusters(x, number):
             random_state=767
         )
         km.fit(x)
-        distortion.append(km.inertia_)
-    plt.plot(range(1, number), distortion)
-    plt.ylabel('Distortion')
+        inertia.append(km.inertia_)
+    plt.plot(range(1, number), inertia)
+    plt.ylabel('km.inertia_')
     plt.xlabel('# of Clusters')
+    plt.title('Inertia vs # Clusters')
     plt.show()
 
 
