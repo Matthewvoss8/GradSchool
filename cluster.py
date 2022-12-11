@@ -59,8 +59,8 @@ def plot_silhouette(x, k):
     plt.axhline(sil_average,
                 color='red')
     plt.xticks(xticks, np.unique(y_hat) + 1)
-    plt.ylabel('Cluster')
-    plt.xlabel('Silhouette Coefficient')
+    plt.ylabel('Silhouette Coefficient')
+    plt.xlabel('Cluster')
     plt.title('Silhouette Coefficient by cluster')
     plt.show()
 
