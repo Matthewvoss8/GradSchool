@@ -28,7 +28,7 @@ def find_number_clusters(x, number):
     plt.ylabel('km.inertia_')
     plt.xlabel('# of Clusters')
     plt.title('Inertia vs # Clusters')
-    plt.show()
+    plt.savefig('cluster.png')
 
 
 def plot_silhouette(x, k):
@@ -62,7 +62,7 @@ def plot_silhouette(x, k):
     plt.ylabel('Silhouette Coefficient')
     plt.xlabel('Cluster')
     plt.title('Silhouette Coefficient by cluster')
-    plt.show()
+    plt.savefig('silhouette')
 
 
 if __name__ == '__main__':
