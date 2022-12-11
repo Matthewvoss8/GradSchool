@@ -60,7 +60,8 @@ def plot_silhouette(x, k):
                 color='red')
     plt.yticks(yticks, np.unique(y_hat) + 1)
     plt.ylabel('Cluster')
-    plt.xlabel('Silhouette Cluster')
+    plt.xlabel('Silhouette Coefficient')
+    plt.title('Silhouette Coefficient by cluster')
     plt.show()
 
 
