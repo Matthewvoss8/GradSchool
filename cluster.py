@@ -64,56 +64,6 @@ def plot_silhouette(x, k):
     plt.show()
 
 
-def find_number_clusters(x, number):
-    distortion = []
-    for i in range(1, number):
-        km = KMeans(
-            n_clusters=i,
-            init='k-means++',
-            n_init=10,
-            max_iter=300,
-            random_state=767
-        )
-        km.fit(x)
-        distortion.append(km.inertia_)
-    plt.plot(range(1, number), distortion)
-    plt.ylabel('Distortion')
-    plt.xlabel('# of Clusters')
-    plt.show()
-
-
-def plot_silhouette(x, k):
-    km = KMeans(n_clusters=k,
-                init='k-means++',
-                n_init=10,
-                max_iter=300,
-                random_state=767)
-    y_hat = km.fit_predict(x)
-    c_labels = np.unique(y_hat)
-    n_clusters = c_labels.shape[0]
-    silhouette = silhouette_samples(x, y_hat)
-    lower, upper = 0, 0
-    yticks = []
-    for i, c in enumerate(c_labels):
-        c_sil = silhouette[y_hat == c]
-        c_sil.sort()
-        upper += len(c_sil)
-        color = cm.jet(float(i), n_clusters)
-        plt.barh(range(lower, upper),
-                 c_sil,
-                 height=1.0,
-                 edgecolor='none',
-                 color=color)
-        yticks.append(np.mean([lower, upper]))
-        lower += len(c_sil)
-    sil_average = np.mean(c_sil)
-    plt.axvline(sil_average,
-                color='black')
-    plt.yticks(yticks, np.unique(y_hat) + 1)
-    plt.ylabel('Cluster')
-    plt.xlabel('Silhouette Cluster')
-    plt.show()
-
 if __name__ == '__main__':
     find_number_clusters(x, 5)
     plt.close()
