@@ -36,7 +36,7 @@ class LymeDisease:
         self.prepare_test_data()
         self.split_data()
         self.test_prep()
-        self.scale_data()
+        #self.scale_data()
         self.tensor_data()
 
 
@@ -102,9 +102,9 @@ class LymeDisease:
         and the data size is small.
         :return:
         """
-        self.x_train_tensor = torch.tensor(self.x_train.astype(float), dtype=torch.float)
-        self.x_valid_tensor = torch.tensor(self.x_valid.astype(float), dtype=torch.float)
-        self.x_test_tensor = torch.tensor(self.x_test.astype(float), dtype=torch.float)
+        self.x_train_tensor = torch.tensor(self.x_train.values.astype(float), dtype=torch.float)
+        self.x_valid_tensor = torch.tensor(self.x_valid.values.astype(float), dtype=torch.float)
+        self.x_test_tensor = torch.tensor(self.x_test.values.astype(float), dtype=torch.float)
         self.y_train_tensor = torch.tensor(self.y_train.values.astype(float), dtype=torch.float)
         self.y_valid_tensor = torch.tensor(self.y_valid.values.astype(float), dtype=torch.float)
         self.y_test_tensor = torch.tensor(self.y_test.values.astype(float), dtype=torch.float)
