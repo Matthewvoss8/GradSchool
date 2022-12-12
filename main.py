@@ -36,7 +36,7 @@ class LymeDisease:
         self.prepare_test_data()
         self.split_data()
         self.test_prep()
-        #self.scale_data()
+        self.scale_data()
         self.tensor_data()
 
 
@@ -147,5 +147,3 @@ class Grid_Search:
         print(f'{self.gs.estimator} best parameters are {self.gs.best_params_}')
         print(f'{self.gs.estimator} training accuracy is {train_acc}%')
         print(f'{self.gs.estimator} validation accuracy is {valid_acc}%')
-
-

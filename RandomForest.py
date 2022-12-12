@@ -38,4 +38,3 @@ if __name__ == '__main__':
     scale = StandardScaler()
     Grid_Search(estimator=random_forest, cv=10, param_grid=param_grid, x_train=x_training, y_train=y_training,
                 x_valid=x_test, y_valid=y_test)
-# using the param_grid, still best validation accuracy at 77%
